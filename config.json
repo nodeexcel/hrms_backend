@@ -1,0 +1,6 @@
+ 
+{
+    "psql_url" : "mysql://root:root@1@127.0.0.1:3036/excellen_hr_test",
+    "jwtSecret" : "HR_APP"
+}
+
