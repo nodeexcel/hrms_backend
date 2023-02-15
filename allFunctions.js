@@ -31,7 +31,7 @@ let getPageById = async (id) => {
 let getRolePages = async (roleid, models) => {
   let rows = await models.sequelize.query(`Select * from roles_pages 
   where roles_pages.role_id = '${roleid}'`,
-  //  {type: QueryTypes.SELECT}
+   {type: QueryTypes.SELECT}
    );
   if (rows.length > 0) {
     let data = await Promise.all(
@@ -217,7 +217,7 @@ let getUserInfo = async (userid, models) => {
     LEFT JOIN user_profile ON users.id = user_profile.user_Id 
     LEFT JOIN user_roles ON users.id = user_roles.user_id 
     LEFT JOIN roles ON user_roles.role_id = roles.id where users.id = ${userid} `,
-    // {type: QueryTypes.SELECT}
+    {type: QueryTypes.SELECT}
     );
     if(isAdmin == null){
       delete q.holding_comments;
@@ -257,7 +257,7 @@ let getUserInfoByWorkEmail = async (workEmailId, models) => {
 let getRoleCompleteDetails = async (roleId, models) => {
   let data;
   let query = await models.sequelize.query(`SELECT * from roles where roles.id = ${roleId} `,
-  // {type: QueryTypes.SELECT}
+  {type: QueryTypes.SELECT}
   )
   query = JSON.parse(JSON.stringify(query));
   if (query.length > 0) {
@@ -285,8 +285,7 @@ let getUserRole = async (userId, models) => {
       userInfo[0].role_id,
       models
     );
-
-    data = roleCompleteDetails;
+    data = roleCompleteDetails; 
   }
   return data;
 };
@@ -354,8 +353,6 @@ let getUserInventories = async (userid, models, userRole = false) => {
   let roleName;
   if (userRole == false) {
     let roleDetails = await getUserRole(userid, models);
-// console.log(23432);
-//     console.log(roleDetails.name);
     if (typeof roleDetails.name!="undefined") {
       roleName = roleDetails.name;
     }
@@ -607,7 +604,7 @@ let getUserPolicyDocument = async (userid, models) => {
   let r_message;
   let r_data = [];
 
-  let q1 = await models.UserProfile.findOne({ where: { user_Id: userid } });
+  let q1 = await models.UserProfile.findOne({ where: { user_Id: userid } },{QueryTypes:SELECT});
   let ar0 = JSON.parse(q1.policy_document);
   let q2 = await models.Config.findOne({ where: { type: "policy_document" } });
   let ar1 = JSON.parse(q2.value);

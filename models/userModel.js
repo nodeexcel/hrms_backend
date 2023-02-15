@@ -35,12 +35,12 @@ function user(database, type) {
       console.log(username,password)
       let query = await models.sequelize.query(
         `select * from users where username = '${username}' and password = '${password}' AND status='Enabled' `,
-        // { type: QueryTypes.SELECT }
+        { type: QueryTypes.SELECT }
       );
       if (forceLoginForUsername != false) {
         query = await models.sequelize.query(
           `select * from users where username='${forceLoginForUsername}' AND status='Enabled' `,
-          // { type: QueryTypes.SELECT }
+          { type: QueryTypes.SELECT }
         );
       }
       const re =
@@ -61,7 +61,7 @@ function user(database, type) {
         let userId =
           query[0].id != null ? query[0].id : userData.userProfile.user_Id;
         let userInfo = await getUserInfo(userId, models);
-
+        console.log(userInfo,"this is userInfo", userInfo)
         if (userInfo == null) {
           message = "Invalid Login";
         } else {

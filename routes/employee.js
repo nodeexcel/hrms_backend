@@ -144,8 +144,17 @@ router.post(
 
 router.post(
   "/assign_manager",
-  // middleware.AuthForMangers,
-  employeeController.assignManager
+  // middleware.AuthForHrAdmin,
+  validators.assign_manager,
+  employeeController.assign_manager_to_emp,
+  handlers.responseForAssignManager
+)
+
+router.post(
+  "/salary_sum",
+  // middleware.AuthForHrAdmin,
+  employeeController.sumOfEmpSalaryByManager,
+  handlers.responseForSumOfEmpSalaryByManager
 )
 
 module.exports = router;

@@ -24,6 +24,8 @@ const {
   UpdateUserInfo,
   updateEmployeePassword,
   deleteRole,
+  assignManagerToEmployee,
+  sumOfSalary
 } = require("../employeeFunction");
 const { validateSecretKey } = require("../allFunctions");
 const { response } = require("express");
@@ -410,24 +412,63 @@ exports.getUserDocumentById = async (req, res, next) => {
   }
 };
 
+exports.assign_manager_to_emp =async (req,res,next) => {
+    try {
+      let reqBody = req.body;
+      if(reqBody.userId && reqBody.managerId){
+        let userId = reqBody.userId;
+        let managerId = reqBody.managerId;
+        let response = await assignManagerToEmployee(userId,managerId,db)
+        if(response){
+          res.error = 0;
+          res.message  = `manager ${managerId} assigned to ${userId}`
+          res.status_code =200;
+          return next()
 
-exports.assignManager = async (req, res, next) =>{
-  try {
-    const reqBody = req.body;
-    if(reqBody.userId !== "" && reqBody.managerId !== "") {
-      let userId = reqBody.userId;
-      let managerId = reqBody.managerId;
-      let response = await assignManagerToEmployee(userId,managerId,db)
-      console.log(response,"response")
-      if(response){
-        res.statusCode(200).send({
-          message:`Manager ${response.managerId} is assigned to Employee ${response.userId}`,
-          data:response
-        })
+        }else{
+          res.status_code = 200;
+          res.error = 1
+          res.message = "contact server"
+          return next()
+        }
+
+      }else{
+        res.status_code = 200;
+        res.error = 1
+        res.message = "please give userId and managerId"
+        return next()
       }
+    } catch (error) {
+      console.log(error);
+      return next()
+    }
+}
+
+exports.sumOfEmpSalaryByManager = async(req,res,next) => {
+  try {
+    let managerId = req.body.managerId;
+    if(managerId){
+      let response = await sumOfSalary(managerId,db);
+      if(response){
+        res.error = 0;
+        res.message  = response
+        res.status_code =200;
+        return next()
+      }else{
+        res.status_code = 200;
+        res.error = 1
+        res.message = "contact server"
+        return next()
+      }
+    }
+    else{
+      res.status_code = 200;
+      res.error = 1
+      res.message = "please give managerId"
+      return next()
     }
   } catch (error) {
     console.log(error);
-    // return next()
+    return next()
   }
 }

@@ -124,6 +124,11 @@ const user_document = [
   // check('user_id','user_id must not be empty').not().isEmpty()
 ];
 
+let assign_manager = [
+  check('userId',"file must not be empty").not().isEmpty(),
+  check('managerId',"file must not be empty").not().isEmpty(),
+]
+
 module.exports = {
   userCreationValidator,
   userLoginValidator,
@@ -149,4 +154,5 @@ module.exports = {
   updateUserByIdValidator,
   updateNewPassValidator,
   updateEmployeePassValidators,
+  assign_manager
 };

@@ -1,5 +1,3 @@
-const { responseForData } = require("../util/responseHandlers");
-
 function config(database, type) {
   const config = database.define(
     "config",
