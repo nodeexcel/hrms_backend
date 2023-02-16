@@ -12,6 +12,7 @@ const sequelize = new Sequelize('excellen_hr_test', 'root', 'root', {
   dialect: 'mysql',
 },{logging: false});
 
+
 Object.keys(Models).forEach((modelName) => {
   const model = Models[modelName](sequelize, Sequelize.DataTypes);
   db[modelName] = model;
@@ -31,11 +32,11 @@ Object.keys(db).forEach((modelName) => {
 
 sequelize.authenticate();
 // try {
-// //   sequelize.sync({ alter: true });
-// //   console.log("created");
-// // } catch (error) {
-// //   console.log(error);
-// // }
+//   sequelize.sync({ alter: true });
+//   console.log("created");
+// } catch (error) {
+//   console.log(error);
+// }
 
 module.exports = Object.assign({}, db, {
   sequelize,

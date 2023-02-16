@@ -25,10 +25,12 @@ const {
   updateEmployeePassword,
   deleteRole,
   assignManagerToEmployee,
+  assignemployees,
   sumOfSalary
 } = require("../employeeFunction");
 const { validateSecretKey } = require("../allFunctions");
 const { response } = require("express");
+const { User } = require("../models");
 
 exports.getUserProfileController = async (req, res, next) => {
   try {
@@ -412,35 +414,135 @@ exports.getUserDocumentById = async (req, res, next) => {
   }
 };
 
+exports.getManagersEmployeesList = async (req,res,next)=>{
+  try{
+    const [managerDetails] = await db.sequelize.query('SELECT distinct * FROM users JOIN user_roles ON users.id = user_roles.user_id WHERE user_roles.role_id = "35"')
+    // console.log(managerDetails)
+    const [employeesDetails] = await db.sequelize.query(`SELECT users.*, managers.manager_id
+    FROM users
+    LEFT JOIN assignManagers AS managers ON users.id = managers.user_id
+    WHERE users.status != 'Disabled';`);
+    managerDetails.forEach((manager,i)=>{
+      managerDetails[i].employeesDetails = employeesDetails.filter(emp=>emp["manager_id"] === manager.user_id);
+    })
+    const unassignedEmployees = employeesDetails.filter(emp=>emp.manager_id === null);
+    managerDetails.push({type:"unassigned", employeesDetails:unassignedEmployees})
+    res.status(200).send(managerDetails)
+  }catch(e){
+    console.log(e);
+    return next(e)
+  }
+}
+
 exports.assign_manager_to_emp =async (req,res,next) => {
     try {
       let reqBody = req.body;
       if(reqBody.userId && reqBody.managerId){
         let userId = reqBody.userId;
         let managerId = reqBody.managerId;
-        let response = await assignManagerToEmployee(userId,managerId,db)
-        if(response){
-          res.error = 0;
-          res.message  = `manager ${managerId} assigned to ${userId}`
-          res.status_code =200;
-          return next()
-
+        console.log(userId,managerId)
+        let checkUser = await db.User.findOneUserById(userId);
+        let checkManager = await db.User.findOneUserById(managerId);
+        if(checkUser && checkManager){
+            let response = await assignManagerToEmployee(userId,managerId,db);
+            if(response){
+              res.error = 0;
+              res.message = response;
+              res.status_code = 200;
+              return next()
+            }else{
+              res.error = 1;
+              res.message = `Something went wrong `;
+              res.status_code = 200;
+              return next()
+            }
         }else{
-          res.status_code = 200;
           res.error = 1
-          res.message = "contact server"
+          res.message = "User not Found"
+          res.status_code = 200;
           return next()
         }
-
-      }else{
-        res.status_code = 200;
-        res.error = 1
-        res.message = "please give userId and managerId"
-        return next()
       }
     } catch (error) {
       console.log(error);
       return next()
+    }
+}
+
+exports.assignmanager =  async(req,res,next)  => {
+  try {
+    let arrayOfUserId = req.body.userId;
+    let managerId = req.body.managerId;
+    if(managerId === ""){
+      let delIds = '(';
+      arrayOfUserId.forEach((id,i)=>{
+        if(i === 0){
+          delIds += id;
+        }else{
+          delIds += `,${id}`
+        }
+      });
+      delIds+= ')'
+      await db.sequelize.query(`delete from assignManagers where user_Id in ${delIds}`)
+      res.error = 0;
+      res.status_code = 200;
+      res.message = "User Unassigned";
+      return next();
+    }
+    if(arrayOfUserId && managerId) {
+      const manager = await db.User.findByPk(managerId);
+      const employees = await db.User.findAll({ where: { id: arrayOfUserId }});
+    
+      if (!manager) {
+        res.error = 1
+      res.message = `Manager with ID ${managerId} not found`
+      res.status_code = 200;
+      return next()
+      }
+      const employeeIdsNotFound = arrayOfUserId.filter(employeeId => {
+        return !employees.some(employee => employee.id === employeeId);
+      });
+    
+      if (employeeIdsNotFound.length > 0) {
+        res.error = 1
+      res.message = `Employees with IDs ${employeeIdsNotFound.join(',')} not found`
+      res.status_code = 200;
+      return next()
+      }
+      let delIds = '(';
+      arrayOfUserId.forEach((id,i)=>{
+        if(i === 0){
+          delIds += id;
+        }else{
+          delIds += `,${id}`
+        }
+      });
+      delIds+= ')'
+      await db.sequelize.query(`delete from assignManagers where user_Id in ${delIds}`)
+    
+      const employeeManagerRows = arrayOfUserId.map(employeeId => ({
+        user_Id: employeeId,
+        manager_Id: managerId
+      }));
+
+      let response = await assignemployees(employeeManagerRows,db)
+      if(response){
+        res.error = 0;
+        res.status_code = 200;
+        res.message  = " User assigned";
+        res.data = response 
+        return next()
+      }
+    }else{
+      res.error = 1
+      res.message = "please enter all fields"
+      res.status_code = 200;
+      return next()
+    }   
+    } catch (error) {
+      console.log(error)
+      res.error = error
+      // return next()
     }
 }
 

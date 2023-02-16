@@ -142,12 +142,19 @@ router.post(
   handlers.responseForEmployee
 );
 
-router.post(
-  "/assign_manager",
+
+router.get(
+  "/managers_employees_list",
   // middleware.AuthForHrAdmin,
-  validators.assign_manager,
-  employeeController.assign_manager_to_emp,
+  employeeController.getManagersEmployeesList,
   handlers.responseForAssignManager
+)
+
+router.post(
+  "/assignemploys",
+  // middleware.AuthForHrAdmin,
+  employeeController.assignmanager,
+  handlers.responseForBulkAssign
 )
 
 router.post(

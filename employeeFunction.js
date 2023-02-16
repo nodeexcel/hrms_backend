@@ -1029,17 +1029,39 @@ let resetToBeDeleteRoleUsersToDefaultRole = async (roleId, req, models) => {
 let assignManagerToEmployee = async (userId,managerId,models) => {
   let error = 0;
   try {
+    let checkIfUserIsAlreadyAssign = await models.assignManager.findOne({where:{user_Id : userId}})
+    console.log(checkIfUserIsAlreadyAssign)
+    if(checkIfUserIsAlreadyAssign){
+      if(checkIfUserIsAlreadyAssign.manager_Id === managerId){
+        return "this user is already assign to this manager"
+      }
+    }
     let response = await models.assignManager.create({
       user_Id : userId,
       manager_Id : managerId
     })
-   return response
+   return `manager ${managerId} assign to user ${userId}`
+  } catch (error) {
+    console.log(error.message)
+    return error.message
+  }
+}
+
+let assignemployees = async (userIdrows,models) => {
+  try {
+    if(userIdrows){
+      let response = models.assignManager.bulkCreate(userIdrows).then((doc,err)=>{
+        if(err) return err
+        return doc
+      })
+      return response
+    }
   } catch (error) {
     console.log(error)
     return error
   }
- 
 }
+
 
 let sumOfSalary = async (managerId,models) => {
 try {
@@ -1054,7 +1076,6 @@ try {
   console.log(error)
   return error
 }
-  
 }
 module.exports = {
   getUserDetailInfo,
@@ -1077,5 +1098,6 @@ module.exports = {
   updateEmployeePassword, deleteRole, getEmployeeCompleteInformation
   ,getUserlatestSalary,
   assignManagerToEmployee,
+  assignemployees,
   sumOfSalary
 }

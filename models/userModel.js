@@ -1,3 +1,4 @@
+
 function user(database, type) {
   const {
     assignUserRole,
@@ -20,6 +21,21 @@ function user(database, type) {
     },
     { timestamps: false }
   );
+
+  User.findOneUserById = async (userId) => {
+    try {
+      let checkUser = await User.findOne({where : { id : userId}});
+      if(checkUser){
+        return checkUser
+      }else{
+        console.log("user not found")
+        return false
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
+  }
 
   User.login = async (
     username,
@@ -213,5 +229,7 @@ function user(database, type) {
   };
   return User;
 }
+
+
 
 module.exports = user;

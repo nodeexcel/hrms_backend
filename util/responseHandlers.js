@@ -98,6 +98,15 @@ let responseForSumOfEmpSalaryByManager = async (req,res) => {
       data:res.data
     })
 }
+
+let responseForBulkAssign = async (req,res) => {
+  res.status(res.status_code).json({
+    error:res.error,
+    message:res.message,
+    data:res.data,
+
+  })
+}
 module.exports = {
   responseHandle,
   responseForData,
@@ -109,5 +118,6 @@ module.exports = {
   resForList,
   responseForLeaveApis,responseForEmployee1,responseForEmployee2,
   responseForAssignManager,
-  responseForSumOfEmpSalaryByManager
+  responseForSumOfEmpSalaryByManager,
+  responseForBulkAssign
 };
