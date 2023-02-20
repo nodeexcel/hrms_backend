@@ -1062,7 +1062,6 @@ let assignemployees = async (userIdrows,models) => {
   }
 }
 
-
 let sumOfSalary = async (managerId,models) => {
 try {
   let response = await models.sequelize.query(`

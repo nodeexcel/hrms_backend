@@ -525,7 +525,8 @@ exports.assignmanager =  async(req,res,next)  => {
         manager_Id: managerId
       }));
 
-      let response = await assignemployees(employeeManagerRows,db)
+      let response = await assignemployees(employeeManagerRows,db);
+      
       if(response){
         res.error = 0;
         res.status_code = 200;

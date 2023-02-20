@@ -3,9 +3,6 @@ const _ = require("lodash");
 const secret = require("./config.json");
 const { Op, QueryTypes, json } = require("sequelize");
 const db = require("./db");
-const { sequelize } = require("./db");
-const user = require("./models/userModel");
-const { Query } = require("pg");
 // const { object } = require("webidl-conversions");
 // const leapYear = require('leap-year');
 const e = require("express");
@@ -15,7 +12,6 @@ const {
   getEnabledUsersList,
 } = require("./employeeFunction");
 // const{getUserMonthAttendaceComplete}=require("./attendaceFunctions")
-const { query } = require("express");
 const { inArray } = require("./settingsFunction");
 
 let _getPreviousMonth = async (year, month) => {
