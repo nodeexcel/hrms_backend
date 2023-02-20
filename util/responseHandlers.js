@@ -83,6 +83,30 @@ let responseForLeaveApis = async (req, res) => {
     data: res.data,
   });
 };
+let responseForAssignManager = async (req,res) => {
+  res.status(res.status_code).json({
+    error:res.error,
+    message: res.message,
+    data: res.data
+  })
+}
+
+let responseForSumOfEmpSalaryByManager = async (req,res) => {
+    res.status(res.status_code).json({
+      error:res.error,
+      message:res.message,
+      data:res.data
+    })
+}
+
+let responseForBulkAssign = async (req,res) => {
+  res.status(res.status_code).json({
+    error:res.error,
+    message:res.message,
+    data:res.data,
+
+  })
+}
 module.exports = {
   responseHandle,
   responseForData,
@@ -92,5 +116,8 @@ module.exports = {
   responseForAddMachine,
   newResponse,
   resForList,
-  responseForLeaveApis,responseForEmployee1,responseForEmployee2
+  responseForLeaveApis,responseForEmployee1,responseForEmployee2,
+  responseForAssignManager,
+  responseForSumOfEmpSalaryByManager,
+  responseForBulkAssign
 };

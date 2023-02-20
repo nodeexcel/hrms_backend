@@ -1,3 +1,4 @@
+
 function user(database, type) {
   const {
     assignUserRole,
@@ -21,6 +22,21 @@ function user(database, type) {
     { timestamps: false }
   );
 
+  User.findOneUserById = async (userId) => {
+    try {
+      let checkUser = await User.findOne({where : { id : userId}});
+      if(checkUser){
+        return checkUser
+      }else{
+        console.log("user not found")
+        return false
+      }
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
+  }
+
   User.login = async (
     username,
     password,
@@ -35,12 +51,12 @@ function user(database, type) {
       console.log(username,password)
       let query = await models.sequelize.query(
         `select * from users where username = '${username}' and password = '${password}' AND status='Enabled' `,
-        // { type: QueryTypes.SELECT }
+        { type: QueryTypes.SELECT }
       );
       if (forceLoginForUsername != false) {
         query = await models.sequelize.query(
           `select * from users where username='${forceLoginForUsername}' AND status='Enabled' `,
-          // { type: QueryTypes.SELECT }
+          { type: QueryTypes.SELECT }
         );
       }
       const re =
@@ -61,7 +77,7 @@ function user(database, type) {
         let userId =
           query[0].id != null ? query[0].id : userData.userProfile.user_Id;
         let userInfo = await getUserInfo(userId, models);
-
+        console.log(userInfo,"this is userInfo", userInfo)
         if (userInfo == null) {
           message = "Invalid Login";
         } else {
@@ -213,5 +229,7 @@ function user(database, type) {
   };
   return User;
 }
+
+
 
 module.exports = user;

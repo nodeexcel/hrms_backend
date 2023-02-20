@@ -8,7 +8,7 @@ const InventoryCommentsModel = require("./inventoryCommentsModel");
 const FilesModel = require("./filesModel");
 const MachineStatus = require("./machineStatusModel");
 const Role = require("./roleModel");
-const Config = require("./configModel");
+// const Config = require("./configModel");
 const UserProfile = require("./userProfileModel");
 const UserRole = require("./userRoleModel");
 const RolesAction = require("./rolesActionsModel");
@@ -21,6 +21,7 @@ const UserDocumentDetails = require("./userDocumentDetail");
 const ElcStage = require("./elc_stage");
 const ElcStagesSteps = require("./elc_stages_stepModel");
 const LoginToken = require("./loginToken");
+const assignManager = require('./assignManager')
 
 module.exports = {
   LoginToken,
@@ -33,7 +34,7 @@ module.exports = {
   FilesModel,
   MachineStatus,
   Role,
-  Config,
+  // Config,
   UserProfile,
   UserRole,
   RolesNotification,
@@ -45,4 +46,5 @@ module.exports = {
   UserDocumentDetails,
   ElcStage,
   ElcStagesSteps,
+  assignManager
 };

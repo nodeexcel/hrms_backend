@@ -16,6 +16,7 @@ const { MachineStatusDeleteValidator } = require("./validators/req-validators");
 const { getUserInfo, DBupdateBySingleWhere, copyExistingRoleRightsToNewRole, getAllRole, assignUserRole } = require("./allFunctions");
 const elc_stages_step = require("./models/elc_stages_stepModel");
 
+
 let getUserDetailInfo = async (userid, req, models) => {
   try {
     let r_error = 1;
@@ -1026,14 +1027,55 @@ let resetToBeDeleteRoleUsersToDefaultRole = async (roleId, req, models) => {
 }
 
 let assignManagerToEmployee = async (userId,managerId,models) => {
-  let response = await models.assignManager.create({
-    userId:userId,
-    managerId:managerId
-  })
-  if(!response){
-    console.log("something went wrong")
+  let error = 0;
+  try {
+    let checkIfUserIsAlreadyAssign = await models.assignManager.findOne({where:{user_Id : userId}})
+    console.log(checkIfUserIsAlreadyAssign)
+    if(checkIfUserIsAlreadyAssign){
+      if(checkIfUserIsAlreadyAssign.manager_Id === managerId){
+        return "this user is already assign to this manager"
+      }
+    }
+    let response = await models.assignManager.create({
+      user_Id : userId,
+      manager_Id : managerId
+    })
+   return `manager ${managerId} assign to user ${userId}`
+  } catch (error) {
+    console.log(error.message)
+    return error.message
   }
- return response
+}
+
+let assignemployees = async (userIdrows,models) => {
+  try {
+    if(userIdrows){
+      let response = models.assignManager.bulkCreate(userIdrows).then((doc,err)=>{
+        if(err) return err
+        return doc
+      })
+      return response
+    }
+  } catch (error) {
+    console.log(error)
+    return error
+  }
+}
+
+
+let sumOfSalary = async (managerId,models) => {
+try {
+  let response = await models.sequelize.query(`
+  SELECT sum(p.final_salary) as totalsalary FROM excellen_hr_test.payslip p 
+  inner join excellen_hr_test.assignManagers a on p.user_Id = a.user_Id
+  where a.manager_Id = ${managerId} group by payslip_month = month(now())
+  `,
+  { type: QueryTypes.SELECT });
+  return response[0]
+} catch (error) {
+  console.log(error)
+  return error
+}
 }
 module.exports = {
   getUserDetailInfo,
@@ -1055,5 +1097,7 @@ module.exports = {
   getSalaryInfo, UpdateUserInfo, updatePassword,
   updateEmployeePassword, deleteRole, getEmployeeCompleteInformation
   ,getUserlatestSalary,
-  assignManagerToEmployee
+  assignManagerToEmployee,
+  assignemployees,
+  sumOfSalary
 }

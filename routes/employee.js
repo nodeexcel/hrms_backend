@@ -142,10 +142,26 @@ router.post(
   handlers.responseForEmployee
 );
 
+
+router.get(
+  "/managers_employees_list",
+  // middleware.AuthForHrAdmin,
+  employeeController.getManagersEmployeesList,
+  handlers.responseForAssignManager
+)
+
 router.post(
-  "/assign_manager",
-  // middleware.AuthForMangers,
-  employeeController.assignManager
+  "/assignemploys",
+  // middleware.AuthForHrAdmin,
+  employeeController.assignmanager,
+  handlers.responseForBulkAssign
+)
+
+router.post(
+  "/salary_sum",
+  // middleware.AuthForHrAdmin,
+  employeeController.sumOfEmpSalaryByManager,
+  handlers.responseForSumOfEmpSalaryByManager
 )
 
 module.exports = router;

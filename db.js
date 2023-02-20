@@ -12,6 +12,7 @@ const sequelize = new Sequelize('excellen_hr_test', 'root', 'root', {
   dialect: 'mysql',
 },{logging: false});
 
+
 Object.keys(Models).forEach((modelName) => {
   const model = Models[modelName](sequelize, Sequelize.DataTypes);
   db[modelName] = model;
