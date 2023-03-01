@@ -423,7 +423,7 @@ exports.getManagersEmployeesList = async (req,res,next)=>{
     FROM users
     LEFT JOIN assignManagers AS managers ON users.id = managers.user_id
     WHERE users.status != 'Disabled';`);
-    if(!employeesDetails || !employeesDetails.length) return res.status(200).send([])
+    // if(!employeesDetails || !employeesDetails.length) return res.status(200).send([])
     managerDetails.forEach((manager,i)=>{
       managerDetails[i].employeesDetails = employeesDetails.filter(emp=>emp["manager_id"] === manager.user_id);
     })
