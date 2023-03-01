@@ -127,6 +127,7 @@ exports.AuthForHrEmployee = async (req, res, next) => {
     );
 
     if (
+      user[0].type.toLowerCase() == "hr" ||
       user[0].type.toLowerCase() == "admin" ||
       user[0].type == "Employee"
     ) {
