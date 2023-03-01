@@ -37,6 +37,8 @@ exports.AuthForHrAdmin = async (req, res, next) => {
   }
   let token = req.headers.authorization.split(" ");
   try {
+    let decodetoken = jwt.decode(token[1],{complete:true})
+    console.log(decodetoken)
     const checkJwt = jwt.verify(token[1], secret.jwtSecret);
 
     const user = await db.sequelize.query(
@@ -125,7 +127,6 @@ exports.AuthForHrEmployee = async (req, res, next) => {
     );
 
     if (
-      user[0].type.toLowerCase() == "hr" ||
       user[0].type.toLowerCase() == "admin" ||
       user[0].type == "Employee"
     ) {
@@ -155,7 +156,6 @@ exports.AuthForMangers = async (req, res, next) =>{
       { type: QueryTypes.SELECT }
     );
     if (
-      user[0].type.toLowerCase() == "hr" ||
       user[0].type.toLowerCase() == "admin" ||
       user[0].type.toLowerCase() == "manager"
     ) {
@@ -165,7 +165,9 @@ exports.AuthForMangers = async (req, res, next) =>{
       res.send("you are not authorized");
     }
   } catch (error) {
-    
+    return res.status(401).json({
+      message: "Auth token invalid",
+    });
   }
 }
 

@@ -145,21 +145,21 @@ router.post(
 
 router.get(
   "/managers_employees_list",
-  middleware.AuthForHrAdmin,
+  middleware.AuthForMangers,
   employeeController.getManagersEmployeesList,
   handlers.responseForAssignManager
 )
 
 router.post(
   "/assignemploys",
-  middleware.AuthForHrAdmin,
+  middleware.AuthForMangers,
   employeeController.assignmanager,
   handlers.responseForBulkAssign
 )
 
 router.post(
   "/salary_sum",
-  middleware.AuthForHrAdmin,
+  middleware.AuthForMangers,
   employeeController.sumOfEmpSalaryByManager,
   handlers.responseForSumOfEmpSalaryByManager
 )
