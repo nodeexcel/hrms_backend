@@ -416,12 +416,14 @@ exports.getUserDocumentById = async (req, res, next) => {
 
 exports.getManagersEmployeesList = async (req,res,next)=>{
   try{
-    const [managerDetails] = await db.sequelize.query('SELECT distinct * FROM users JOIN user_roles ON users.id = user_roles.user_id WHERE user_roles.role_id = "35"')
+    const [managerDetails] = await db.sequelize.query(`SELECT DISTINCT users.* FROM users JOIN user_roles ON users.id = user_roles.user_id JOIN roles ON user_roles.role_id = roles.id WHERE roles.name = 'manager';`)
+    if(!managerDetails || !managerDetails.length) return res.status(200).send([])
     // console.log(managerDetails)
     const [employeesDetails] = await db.sequelize.query(`SELECT users.*, managers.manager_id
     FROM users
     LEFT JOIN assignManagers AS managers ON users.id = managers.user_id
     WHERE users.status != 'Disabled';`);
+    if(!employeesDetails || !employeesDetails.length) return res.status(200).send([])
     managerDetails.forEach((manager,i)=>{
       managerDetails[i].employeesDetails = employeesDetails.filter(emp=>emp["manager_id"] === manager.user_id);
     })
