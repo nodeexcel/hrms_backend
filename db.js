@@ -31,12 +31,12 @@ Object.keys(db).forEach((modelName) => {
 });
 
 sequelize.authenticate();
-try {
-  sequelize.sync({ alter: true });
-  console.log("created");
-} catch (error) {
-  console.log(error);
-}
+// try {
+//   sequelize.sync({ alter: true });
+//   console.log("created");
+// } catch (error) {
+//   console.log(error);
+// }
 
 module.exports = Object.assign({}, db, {
   sequelize,
